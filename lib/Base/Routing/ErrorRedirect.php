@@ -9,6 +9,9 @@ use lib\Base\Support\Session;
 
 class ErrorRedirect extends ActionRedirect
 {
+    /**
+     * @return mixed|void
+     */
     public function         run()
     {
         Session::flash('redirectInput', $this->args);

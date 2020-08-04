@@ -1,22 +1,15 @@
 <?php
 
 
-namespace lib\Base\Prelang\Handlers;
+namespace Prelang\Handlers;
 
 
-use lib\Base\Prelang\Handler;
-
-class BaseCut extends Handler
+class BaseCut extends Base
 {
-
-    public function pattern()
+    public function __construct(&$args, &$macrosArray, $appSpace)
     {
-        // start: 1, name: 2, values: 3
-        return '/(@(?!end)(\w*))\s*\(\s*((?:(?!\))[\s\S])*)\s*\)/';
-    }
+        parent::__construct($args, $macrosArray, $appSpace);
 
-    protected function getMacrosName(&$matches)
-    {
-        return $matches[2][0];
+        $this->with(self::PARAMS);
     }
 }

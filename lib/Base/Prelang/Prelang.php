@@ -1,7 +1,7 @@
 <?php
 
 
-namespace   lib\Base\Prelang;
+namespace   Prelang;
 
 
 use SplDoublyLinkedList;
@@ -10,11 +10,11 @@ class   Prelang
 {
     use ViewArgs;
 
-    protected static    $dir = '';
-    protected           $handlers = [];
-    protected           $orderBefore = [];
-    protected           $orderAfter = [];
-    protected           $orderFinish = [];
+    private static array    $dirs = [];
+    private array           $handlers = [];
+    private array           $orderBefore = [];
+    private array           $orderAfter = [];
+    private array           $orderFinish = [];
 
     public function         __construct(&$args, $config)
     {
@@ -23,7 +23,7 @@ class   Prelang
         }
 
         if (isset($config['handlers'])) {
-            $this->handlers = Handler::createArray($args, $config['handlers'], $config['appSpace'], $config['selfSpace']);
+            $this->handlers = Handler::createArray($args, $config['handlers'], $config['appSpace']);
         }
 
         if (isset($config['before'])) {
@@ -37,19 +37,22 @@ class   Prelang
         }
 
         if (isset($config['viewDir'])) {
-            self::$dir = $config['viewDir'];
+            self::$dirs = $config['viewDir'];
         }
     }
 
     public static function  getPage($pageName)
     {
         if ($pageName !== false) {
-            $page = self::$dir.'/'.$pageName.'.php';
+            foreach (self::$dirs as $mask => $path) {
+                $pattern = preg_quote('@'.$mask, null);
+                $page = preg_replace("/$pattern/", $path, $pageName).'.php';
 
-            ob_start();
-            if (file_exists($page) || is_file($page)) {
-                require $page;
-                return ob_get_clean();
+                if (file_exists($page) && is_file($page)) {
+                    ob_start();
+                    require $page;
+                    return ob_get_clean();
+                }
             }
             throw new \RuntimeException('View not found', 500);
         }
@@ -58,14 +61,38 @@ class   Prelang
 
     public function         process($view)
     {
+        $pageList = $this->before($view);
+        $result = $pageList->isEmpty() ? '' : $pageList->pop();
+        $this->after($result, $pageList);
+        $this->finish($result);
+
+        ob_start();
+        eval(" ?>".$result."<?php ");
+        return ob_get_clean();
+    }
+
+    private function        goOrder(&$order, &$result, &$page, $action) {
+        foreach ($order as $handler => $macros) {
+            if (!is_string($handler)) {
+                $this->goOrder($macros, $result, $page, $action);
+            } else {
+                $handler = $this->handlers[$handler];
+                $handler->process($result, $page, $macros, $action);
+            }
+        }
+    }
+
+    private function        before($view)
+    {
         $pageList = new SplDoublyLinkedList();
         $views = [];
 
         while ($page = self::getPage($view)) {
-            $this->before($page);
+            $this->goOrder($this->orderBefore, $page, $page, 'before');
             $pageList->push($page);
 
-            if (preg_match('/@use\s*\(\s*\'\s*(.+)\s*\'\s*\)/', $page, $matches) && isset($views[$matches[1]])) {
+            if (preg_match('/@use\s*\(\s*[\'\"]?\s*([\w\/ @.]+)\s*[\'\"]?\s*\)/', $page, $matches) &&
+                    !isset($views[$matches[1]])) {
                 $view = $matches[1];
                 $views[$matches[1]] = 1;
             } else {
@@ -73,62 +100,24 @@ class   Prelang
             }
         }
 
-        $result = $pageList->isEmpty() ? '' : $pageList->pop();
+        return $pageList;
+    }
 
+    private function        after(&$result, $pageList)
+    {
         while (!$pageList->isEmpty()) {
             $page = $pageList->pop();
-            $this->after($result, $page);
-        }
-
-        $this->finish($result);
-        preg_replace('/@use\s*\(\s*\'\s*(.*)\s*\'\s*\)/', '', $page);
-
-        ob_start();
-        eval(" ?>".$result."<?php ");
-        $result = ob_get_clean();
-        foreach ($this->handlers as $handler) {
-            $handler->clean($result);
-        }
-        return $result;
-    }
-
-    private function        before(&$page)
-    {
-            foreach ($this->orderBefore as $handler => $macros) {
-                $handler = $this->handlers[$handler];
-                $pattern = $handler->pattern();
-
-                if (preg_match_all($pattern, $page, $matches, PREG_OFFSET_CAPTURE|PREG_SET_ORDER)) {
-                    $handler->before($page, $matches, $macros);
-                }
-            }
-    }
-
-    private function        after(&$result, &$page)
-    {
-        foreach ($this->orderAfter as $handler => $macros) {
-            $handler = $this->handlers[$handler];
-            $pattern = $handler->pattern();
-
-            $resultMatches = [];
-            $pageMatches = [];
-
-            if (preg_match_all($pattern, $result, $resultMatches, PREG_OFFSET_CAPTURE|PREG_SET_ORDER) ||
-                preg_match_all($pattern, $page, $pageMatches, PREG_OFFSET_CAPTURE)) {
-                $handler->after($result, $page, $resultMatches, $pageMatches, $macros);
-            }
+            $this->goOrder($this->orderAfter, $result, $page, 'after');
         }
     }
 
     private function        finish(&$result)
     {
-        foreach ($this->orderFinish as $handler => $macros) {
-            $handler = $this->handlers[$handler];
-            $pattern = $handler->pattern();
+        $this->goOrder($this->orderFinish, $result, $result, 'finish');
 
-            if (preg_match_all($pattern, $result, $matches, PREG_OFFSET_CAPTURE|PREG_SET_ORDER)) {
-                $handler->finish($result, $matches, $macros);
-            }
+        preg_replace('/@use\s*\(\s*[\'\"]?\s*([\w\/ @.]*)\s*[\'\"]?\s*\)/', '', $result);
+        foreach ($this->handlers as $handler) {
+            $handler->clean($result);
         }
     }
 }

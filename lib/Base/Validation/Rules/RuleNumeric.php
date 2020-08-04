@@ -11,12 +11,12 @@ class   RuleNumeric extends RuleSingleton
     protected function  __construct($params)
     {}
 
-    public function     check(&$name, &$allInput, &$propertyRules)
+    public function     check(string $name, array &$allInput, array &$propertyRules): bool
     {
         return (!isset($allInput[$name]) || is_null($allInput[$name])) || is_numeric($allInput[$name]);
     }
 
-    public function     getMessage(&$name, &$allInput)
+    public function     getMessage(string $name, array &$allInput): string
     {
         return '"'.$name.'" must be a number';
     }

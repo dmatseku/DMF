@@ -6,13 +6,27 @@ namespace   lib\Base\Database;
 
 use lib\Base\Support\Config;
 use PDO;
+use PDOStatement;
 
 class   DB
 {
-    protected   $connect;
-    protected   $query;
+    /**
+     * @var PDO Connection object
+     */
+    private PDO $connect;
 
-    protected function      __construct($query, $stmtOptions)
+    /**
+     * @var bool|PDOStatement Statement object
+     */
+    private     $query;
+
+    /**
+     * DB constructor. Creates connection and prepare statement
+     *
+     * @param string $query execution query
+     * @param array $stmtOptions option for preparing statement
+     */
+    protected function      __construct(string $query, array $stmtOptions)
     {
         $db = Config::get('database', 'SQL', 'mysql');
         $driver = $db['DRIVER'];
@@ -27,23 +41,43 @@ class   DB
         $this->query = $this->connect->prepare($query, $stmtOptions);
     }
 
-    public static function  createQuery($query, $stmtOptions = null)
+    /**
+     * Create simple query
+     *
+     * @param string $query execution query
+     * @param array $stmtOptions option for preparing statement
+     *
+     * @return static object of query
+     */
+    public static function  createQuery(string $query, array $stmtOptions = [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY])
     {
-        return new static($query, $stmtOptions ?? [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+        return new static($query, $stmtOptions);
     }
 
-    public static function  createProcedure($procedure, $stmtOptions = null)
+    /**
+     * Create procedure query: CALL $procedure
+     *
+     * @param string $procedure execution procedure (without CALL)
+     * @param array $stmtOptions
+     *
+     * @return static object of query
+     */
+    public static function  createProcedure(string $procedure, array $stmtOptions = [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY])
     {
-        $query = "CALL $procedure";
-
-        return new static($query, $stmtOptions ?? [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+        return new static("CALL $procedure", $stmtOptions);
     }
 
-    public function         getResult($params = null, $modelName = null)
+    /**
+     * @param array $params arguments for query
+     * @param string $modelName name of class for result
+     *
+     * @return array array of results. if modelName is not null, then it's array of object. Otherwise it's simple array
+     */
+    public function         getResult(array $params = null, string $modelName = null)
     {
         $this->query->execute($params);
 
-        if (!$modelName) {
+        if ($modelName === null) {
             return $this->query->fetchAll();
         }
         return $this->query->fetchAll(PDO::FETCH_CLASS, $modelName);

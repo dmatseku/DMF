@@ -6,7 +6,15 @@ namespace lib\Base\Support;
 
 class   Config
 {
-    private static function getValue($keys, $array, $default)
+    /**
+     * get value from multi-level array
+     *
+     * @param array $keys
+     * @param array $array
+     * @param mixed $default
+     * @return mixed
+     */
+    private static function getValue(array $keys, array $array, $default)
     {
         foreach ($keys as $oneKey) {
             if (!isset($array[$oneKey])) {
@@ -17,7 +25,15 @@ class   Config
         return $array;
     }
 
-    public static function  get($file, $key = null, $default = null)
+    /**
+     * get value from config file
+     *
+     * @param string $file
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
+     */
+    public static function  get(string $file, string $key = null, $default = null)
     {
         $file = Session::get('DIR', '').'config/'.$file.'.php';
 

@@ -8,9 +8,12 @@ use lib\Base\Validation\Rule;
 
 class   RulePattern extends Rule
 {
+    /**
+     * @var mixed|string pattern for regex
+     */
     protected $regex = '//';
 
-    public function __construct($params)
+    protected function  __construct($params)
     {
         if (!is_null($params)) {
             if (is_string($params)) {
@@ -23,13 +26,13 @@ class   RulePattern extends Rule
         }
     }
 
-    public function check(&$name, &$allInput, &$propertyRules)
+    public function     check(string $name, array &$allInput, array &$propertyRules): bool
     {
         return (!isset($allInput[$name]) || is_null($allInput[$name])) ||
             !empty(preg_match($this->regex, $allInput[$name]));
     }
 
-    public function getMessage(&$name, &$allInput)
+    public function     getMessage(string $name, array &$allInput): string
     {
         return '"'.$name.'" does not match the pattern';
     }

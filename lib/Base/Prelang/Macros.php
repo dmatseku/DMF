@@ -1,17 +1,18 @@
 <?php
 
 
-namespace   lib\Base\Prelang;
+namespace   Prelang;
 
 
 abstract class  Macros
 {
     use ViewArgs;
 
-    abstract public function    name();
-    abstract public function    before(&$page, &$fragment);
-    abstract public function    after(&$previous, &$page, &$resultMatches, &$fragment);
-    abstract public function    finish(&$page, &$fragment);
+    abstract public function    name(): string;
+    abstract public function    before(Fragment $fragment);
+    abstract public function    after(Fragment $fragment);
+    abstract public function    finish(Fragment $fragment);
+    abstract public function    clean(Fragment $fragment): void;
 
     public function             __construct(&$args, $params)
     {
@@ -20,7 +21,7 @@ abstract class  Macros
         }
     }
 
-    public static function      createArray(&$args, &$macrosArray, $appSpace, $selfSpace)
+    public static function      createArray(&$args, &$macrosArray, $appSpace)
     {
         $result = [];
 
@@ -34,9 +35,9 @@ abstract class  Macros
 
             $macrosClass = $appSpace.'\\Macros\\'.$macros;
             if (!class_exists($macrosClass) || !is_subclass_of($macrosClass, self::class)) {
-                $macrosClass = $selfSpace.'\\Macros\\'.$macros;
+                $macrosClass = 'Prelang\\Macros\\'.$macros;
                 if (!class_exists($macrosClass) || !is_subclass_of($macrosClass, self::class)) {
-                    throw new \RuntimeException('Macros of prelang does not exists', 500);
+                    throw new \RuntimeException('Macros "'.$macros.'" of prelang does not exists', 500);
                 }
             }
 

@@ -8,23 +8,40 @@ use lib\Base\Support\Session;
 
 class   Router
 {
-    protected static    $getActions = [];
-    protected static    $postActions = [];
+    /**
+     * @var array get routes
+     */
+    private static array    $getActions = [];
+    /**
+     * @var array post routes
+     */
+    private static array    $postActions = [];
 
-    private static      $instance = null;
+    /**
+     * @var Router singleton object
+     */
+    private static ?Router  $instance = null;
 
-    protected function      __construct() {
+    /**
+     * Router constructor. Init routes
+     */
+    private function        __construct()
+    {
         require_once Session::get('DIR', '').'app/routes.php';
     }
 
-    protected function      __clone() { }
-
+    private function        __clone() { }
     public function         __wakeup()
     {
         throw new \RuntimeException("Cannot unserialize a singleton.", 500);
     }
 
-    public static function  getInstance()
+    /**
+     * Get instance
+     *
+     * @return Router
+     */
+    public static function  getInstance(): Router
     {
         if (!self::$instance) {
             self::$instance = new Router;
@@ -33,14 +50,25 @@ class   Router
         return self::$instance;
     }
 
-    public static function  checkRoute($route)
+    /**
+     * Check route syntax
+     * @param string $route
+     */
+    public static function  checkRoute(string $route)
     {
         if (!preg_match('/^(\w+\/)*(\w+)?$/', $route)) {
             throw new \RuntimeException("Invalid router syntax", 500);
         }
     }
 
-    public static function  formatAction($action)
+    /**
+     * make controller->action from string and check existing
+     *
+     * @param string $action
+     *
+     * @return array
+     */
+    public static function  formatAction(string $action): array
     {
         $matches = null;
 
@@ -53,7 +81,7 @@ class   Router
             $controller = 'lib\\Base\\Controllers\\'.$matches[1];
 
             if (!class_exists($controller) || !method_exists($controller, $matches[3])) {
-                throw new \RuntimeException('Action "' . $matches[0] . '" doesn\'t exist', 404);
+                throw new \RuntimeException('Action "' . $matches[0] . '" doesn\'t exist', 500);
             }
         }
 
@@ -61,7 +89,13 @@ class   Router
         return [$controller, $matches[3]];
     }
 
-    public static function  get($route, $action)
+    /**
+     * create GET route
+     *
+     * @param string $route
+     * @param string $action
+     */
+    public static function  get(string $route, string $action)
     {
         $route = trim($route, "\ \t\n\r\0\x0B/");
         $action = trim($action);
@@ -70,7 +104,13 @@ class   Router
         self::$getActions[$route] = self::formatAction($action);
     }
 
-    public static function  post($route, $action)
+    /**
+     * create POST route
+     *
+     * @param string $route
+     * @param string $action
+     */
+    public static function  post(string $route, string $action)
     {
         $route = trim($route, "\ \t\n\r\0\x0B/");
         $action = trim($action);
@@ -79,6 +119,11 @@ class   Router
         self::$postActions[$route] = self::formatAction($action);
     }
 
+    /**
+     * get action by route
+     *
+     * @return array|null
+     */
     private function        find()
     {
         $url = trim(preg_replace('/\/index\.php|\?.*/', '', $_SERVER['REQUEST_URI']), '/');
@@ -93,6 +138,11 @@ class   Router
         return null;
     }
 
+    /**
+     * get response by route
+     *
+     * @return mixed
+     */
     public function         getResponse()
     {
         if ($controller_info = $this->find()) {
@@ -104,7 +154,13 @@ class   Router
         throw new \RuntimeException('Page not found', 404);
     }
 
-    public function         getResponseByAction($action)
+    /**
+     * get responce by action string
+     *
+     * @param string $action
+     * @return mixed
+     */
+    public function         getResponseByAction(string $action)
     {
         $formattedAction = self::formatAction($action);
         $request = new Request('Action', $action);
@@ -115,6 +171,11 @@ class   Router
         return $controller->$controller_func($request);
     }
 
+    /**
+     * get home route
+     *
+     * @return mixed|null
+     */
     public static function  home()
     {
         return Config::get('app', 'home', '');

@@ -11,6 +11,9 @@ class   Session
         //..
     }
 
+    /**
+     * init session
+     */
     public static function  start()
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -18,6 +21,9 @@ class   Session
         }
     }
 
+    /**
+     * destroy session
+     */
     public static function  abort()
     {
         if (session_status() === PHP_SESSION_ACTIVE) {
@@ -25,44 +31,86 @@ class   Session
         }
     }
 
-    public static function  put($name, $value)
+    /**
+     * put static value
+     *
+     * @param mixed $key
+     * @param mixed $value
+     */
+    public static function  put($key, $value)
     {
-        $_SESSION[$name] = ['value' => $value, 'remove' => false];
+        $_SESSION[$key] = ['value' => $value, 'remove' => false];
     }
 
-    public static function  flash($name, $value)
+    /**
+     * put disposable value
+     *
+     * @param mixed $key
+     * @param mixed $value
+     */
+    public static function  flash($key, $value)
     {
-        $_SESSION[$name] = ['value' => $value, 'remove' => true];
+        $_SESSION[$key] = ['value' => $value, 'remove' => true];
     }
 
-    public static function  get($name, $default = null)
+    /**
+     * get and remove value if it disposable
+     *
+     * @param mixed $key
+     * @param mixed $default
+     *
+     * @return mixed
+     */
+    public static function  get($key, $default = null)
     {
-        if (isset($_SESSION[$name])) {
-            $value = $_SESSION[$name]['value'];
+        if (isset($_SESSION[$key])) {
+            $value = $_SESSION[$key]['value'];
 
-            if ($_SESSION[$name]['remove']) {
-                unset($_SESSION[$name]);
+            if ($_SESSION[$key]['remove']) {
+                unset($_SESSION[$key]);
             }
             return $value;
         }
         return $default;
     }
 
-    public static function  keep($name, $default = null)
+    /**
+     * get and don't remove value
+     *
+     * @param mixed $key
+     * @param mixed $default
+     *
+     * @return mixed
+     */
+    public static function  keep($key, $default = null)
     {
-        if (isset($_SESSION[$name])) {
-            return $_SESSION[$name]['value'];
+        if (isset($_SESSION[$key])) {
+            return $_SESSION[$key]['value'];
         }
         return $default;
     }
 
-    public static function  has($name)
+    /**
+     * check is value exist and not null
+     *
+     * @param $key
+     *
+     * @return bool
+     */
+    public static function  has($key): bool
     {
-        return isset($_SESSION[$name]) && !empty($_SESSION[$name]['value']);
+        return isset($_SESSION[$key]) && !empty($_SESSION[$key]['value']);
     }
 
-    public static function  exists($name)
+    /**
+     * check is value exist
+     *
+     * @param $key
+     *
+     * @return bool
+     */
+    public static function  exists($key): bool
     {
-        return isset($_SESSION[$name]);
+        return isset($_SESSION[$key]);
     }
 }

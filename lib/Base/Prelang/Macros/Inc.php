@@ -1,31 +1,33 @@
 <?php
 
 
-namespace lib\Base\Prelang\Macros;
+namespace Prelang\Macros;
 
 
-use lib\Base\Prelang\Macros;
-use lib\Base\Prelang\Prelang;
+use Prelang\Fragment;
+use Prelang\Macros;
+use Prelang\Prelang;
 
 class Inc extends Macros
 {
-
-    public function name()
+    public function name(): string
     {
         return 'include';
     }
 
-    public function before(&$page, &$fragment)
+    public function before(Fragment $fragment)
     {
         $file = Prelang::getPage(trim($fragment[3][0], " \t\n\r\0\x0B'"));
         if (!$file) {
             $file = '';
         }
 
-        $page = substr_replace($page, $file, $fragment[0][1], strlen($fragment[0][0]));
+        return $file;
     }
 
-    public function after(&$previous, &$page, &$resultMatches, &$fragment) {}
+    public function after(Fragment $fragment) {return null;}
 
-    public function finish(&$page, &$fragment) {}
+    public function finish(Fragment $fragment) {return null;}
+
+    public function clean(Fragment $fragment): void {}
 }

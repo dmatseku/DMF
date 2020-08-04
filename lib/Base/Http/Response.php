@@ -8,23 +8,51 @@ use         lib\Base\Http\Request;
 
 abstract class Response
 {
+    /**
+     * @var array value
+     */
     protected $args = [];
 
+    /**
+     * Make response
+     */
     abstract public function    run();
 
-    public function             with($valuesArray)
+    /**
+     * insert args
+     *
+     * @param array $values
+     *
+     * @return $this
+     */
+    public function             with(array $values)
     {
-        $this->args = $valuesArray + $this->args;
+        $this->args = $values + $this->args;
         return $this;
     }
 
-    public function             withErrors($errorsArray)
+    /**
+     * insert error messages
+     *
+     * @param array $errors
+     *
+     * @return $this
+     */
+    public function             withErrors(array $errors)
     {
-        $this->args['inputErrors'] = $errorsArray['inputErrors'] ?? $errorsArray;
+        $this->args['inputErrors'] = $errors['inputErrors'] ?? $errors;
         return $this;
     }
 
-    public function             withInput($input, $except = null)
+    /**
+     * insert input in args
+     *
+     * @param array $input
+     * @param string|mixed $except exclude these variables
+     *
+     * @return $this
+     */
+    public function             withInput(array $input, $except = null)
     {
         if (is_array($input)) {
             $this->args['prevInput'] = $input['prevInput'] ?? $input;

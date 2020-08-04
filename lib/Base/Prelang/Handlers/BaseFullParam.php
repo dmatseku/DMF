@@ -1,22 +1,15 @@
 <?php
 
 
-namespace lib\Base\Prelang\Handlers;
+namespace Prelang\Handlers;
 
 
-use lib\Base\Prelang\Handler;
-
-class BaseFullParam extends Handler
+class BaseFullParam extends Base
 {
-
-    public function pattern()
+    public function __construct(&$args, &$macrosArray, $appSpace)
     {
-        //start: 1, name: 2, params: 3, values: 4, end: 5, endname: 6
-        return '/(@(?!end)(\w*))\s\(\s*([\s\S]*)\s*\)\s(\s*[\s\S]*\s*)(@end(\w*))/';
-    }
+        parent::__construct($args, $macrosArray, $appSpace);
 
-    protected function getMacrosName(&$matches)
-    {
-        return $matches[2][0] === $matches[5][0] ? $matches[2][0] : false;
+        $this->with(self::PARAMS|self::CONTENT);
     }
 }

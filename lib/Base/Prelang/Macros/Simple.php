@@ -1,27 +1,27 @@
 <?php
 
 
-namespace lib\Base\Prelang\Macros;
+namespace Prelang\Macros;
 
 
-use lib\Base\Prelang\Macros;
+use Prelang\Fragment;
+use Prelang\Macros;
 
 class Simple extends Macros
 {
-
-    public function name()
+    public function name(): string
     {
-        return '!';
+        return '!!';
     }
 
-    public function before(&$page, &$fragment)
-    {
-        $str = '<?= '.$fragment[3][0].' ?>';
+    public function before(Fragment $fragment) {return null;}
 
-        $page = substr_replace($page, $str, $fragment[0][1], strlen($fragment[0][0]));
+    public function after(Fragment $fragment) {return null;}
+
+    public function finish(Fragment $fragment)
+    {
+        return '<?= '.$fragment->match[4][0].' ?>';
     }
 
-    public function after(&$previous, &$page, &$resultMatches, &$fragment) {}
-
-    public function finish(&$page, &$fragment) {}
+    public function clean(Fragment $fragment): void {}
 }

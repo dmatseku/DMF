@@ -10,6 +10,13 @@ use lib\Base\Views\View;
 
 class   ErrorController
 {
+    /**
+     * 404 error presentation
+     *
+     * @param Request $request
+     *
+     * @return View
+     */
     public function err404(Request $request)
     {
         if (Config::get('app', 'devmode', false)) {
@@ -23,6 +30,13 @@ class   ErrorController
             ]);
     }
 
+    /**
+     * 403 error presentation
+     *
+     * @param Request $request
+     *
+     * @return View
+     */
     public function err403(Request $request)
     {
         if (Config::get('app', 'devmode', false)) {
@@ -36,6 +50,13 @@ class   ErrorController
             ]);
     }
 
+    /**
+     * 500 error presentation
+     *
+     * @param Request $request
+     *
+     * @return View
+     */
     public function err500(Request $request)
     {
         if (Config::get('app', 'devmode', false)) {

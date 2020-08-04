@@ -7,11 +7,11 @@ namespace Prelang\Macros;
 use Prelang\Fragment;
 use Prelang\Macros;
 
-class Special extends Macros
+class OperatorElse extends Macros
 {
     public function name(): string
     {
-        return '{';
+        return 'else';
     }
 
     public function before(Fragment $fragment) {return null;}
@@ -20,7 +20,7 @@ class Special extends Macros
 
     public function finish(Fragment $fragment)
     {
-        return '<?= htmlspecialchars('.$fragment->match[4][0].') ?>';
+        return "<?php else: ?>";
     }
 
     public function clean(Fragment $fragment): void {}

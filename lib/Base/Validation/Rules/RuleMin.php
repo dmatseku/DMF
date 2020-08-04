@@ -8,8 +8,16 @@ use lib\Base\Validation\Rule;
 
 class   RuleMin extends Rule
 {
-    protected   $value = 0;
-    protected   $isString = false;
+    /**
+     * @var int limit
+     */
+    private int     $value = 0;
+    /**
+     * check as string
+     *
+     * @var bool
+     */
+    private bool    $isString = false;
 
     protected function  __construct($params)
     {
@@ -22,7 +30,7 @@ class   RuleMin extends Rule
         }
     }
 
-    public function     check(&$name, &$allInput, &$propertyRules)
+    public function     check(string $name, array &$allInput, array &$propertyRules): bool
     {
         if (!isset($allInput[$name]) || is_null($allInput[$name])) {
             return true;
@@ -36,7 +44,7 @@ class   RuleMin extends Rule
         return $allInput[$name] >= $this->value;
     }
 
-    public function     getMessage(&$name, &$allInput)
+    public function     getMessage(string $name, array &$allInput): string
     {
         if ($this->isString) {
             return '"'.$name.'" must have at least '.$this->value.' characters.';

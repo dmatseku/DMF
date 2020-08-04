@@ -7,11 +7,11 @@ namespace Prelang\Macros;
 use Prelang\Fragment;
 use Prelang\Macros;
 
-class Special extends Macros
+class OperatorElseif extends Macros
 {
     public function name(): string
     {
-        return '{';
+        return 'elseif';
     }
 
     public function before(Fragment $fragment) {return null;}
@@ -20,7 +20,7 @@ class Special extends Macros
 
     public function finish(Fragment $fragment)
     {
-        return '<?= htmlspecialchars('.$fragment->match[4][0].') ?>';
+        return "<?php elseif (".trim($fragment->match[3][0], " \t\n\r\0\x0B'\"")."): ?>";
     }
 
     public function clean(Fragment $fragment): void {}

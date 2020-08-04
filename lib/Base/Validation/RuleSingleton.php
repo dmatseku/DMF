@@ -6,7 +6,10 @@ namespace lib\Base\Validation;
 
 abstract class  RuleSingleton extends Rule
 {
-    private static  $instances = [];
+    /**
+     * @var array singleton instances
+     */
+    private static array    $instances = [];
 
     protected function      __clone() { }
     public function         __wakeup()
@@ -14,7 +17,14 @@ abstract class  RuleSingleton extends Rule
         throw new \Exception("Cannot unserialize a singleton.");
     }
 
-    public static function  get($params)
+    /**
+     * get instance
+     *
+     * @param mixed $params
+     *
+     * @return RuleSingleton
+     */
+    public static function  get($params): RuleSingleton
     {
         $class = static::class;
         if (!isset(self::$instances[$class])) {

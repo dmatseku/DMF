@@ -6,18 +6,49 @@ namespace   lib\Base\Validation;
 
 abstract class  Rule
 {
-    abstract public function    check(&$name, &$allInput, &$propertyRules);
+    /**
+     * check value
+     *
+     * @param string $name
+     * @param array $allInput
+     * @param array $propertyRules
+     *
+     * @return bool
+     */
+    abstract public function    check(string $name, array &$allInput, array &$propertyRules): bool;
 
-    abstract public function    getMessage(&$name, &$allInput);
+    /**
+     * get error message
+     *
+     * @param string $name
+     * @param array $allInput
+     *
+     * @return string
+     */
+    abstract public function    getMessage(string $name, array &$allInput): string;
 
     abstract protected function __construct($params);
 
+    /**
+     * get instance of rule
+     *
+     * @param array|string $params
+     *
+     * @return static
+     */
     public static function      get($params)
     {
         return new static($params);
     }
 
-    private static function     findRule($ruleName)
+    /**
+     * check is rule exist and return
+     *
+     * @param string $ruleName
+     *
+     * @return Rule
+     */
+    private static function     findRule(string $ruleName): string
     {
         $class = 'app\\Rules\\Rule'.ucfirst($ruleName);
         if (class_exists($class) && is_subclass_of($class, self::class)) {
@@ -32,11 +63,18 @@ abstract class  Rule
         throw new \RuntimeException('Rule "'.$ruleName.'" doesn\'t exists or class isn\'t rule', 500);
     }
 
-    public static function      createRulesArray($rulesArray)
+    /**
+     * create array of rules instances
+     *
+     * @param array $rules
+     *
+     * @return array
+     */
+    public static function      createRulesArray(array $rules): array
     {
         $res = [];
 
-        foreach ($rulesArray as $rule => $params) {
+        foreach ($rules as $rule => $params) {
             if (!is_string($rule) && is_string($params)) {
                 $delimiter = strpos($params, ':');
 

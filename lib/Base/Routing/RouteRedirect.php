@@ -9,8 +9,14 @@ use         lib\Base\Support\Session;
 
 class   RouteRedirect extends Response
 {
-    private $redirectPath;
+    /**
+     * @var string Path to redirect
+     */
+    private string  $redirectPath;
 
+    /**
+     * execute redirect
+     */
     public function         run()
     {
         Session::flash('redirectInput', $this->args);
@@ -19,12 +25,22 @@ class   RouteRedirect extends Response
         exit;
     }
 
-    public function         __construct($route)
+    /**
+     * RouteRedirect constructor.
+     *
+     * @param string $route
+     */
+    public function         __construct(string $route)
     {
         $this->redirectPath = 'http://'.$_SERVER['HTTP_HOST'].'/'.$route;
     }
 
-    public static function  back()
+    /**
+     * redirect to last route
+     *
+     * @return RouteRedirect
+     */
+    public static function  back(): RouteRedirect
     {
         return new RouteRedirect(Session::get('previousRoute', Router::home()));
     }

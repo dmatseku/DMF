@@ -6,6 +6,7 @@ use lib\Base\Support\Config;
 use lib\Base\Support\Session;
 
 spl_autoload_register(function($class) {
+    $class = preg_replace('/^Prelang/', 'lib\\Base\\Prelang', $class);
     $class = '../'.str_replace('\\', '/', $class).'.php';
 
     if (file_exists($class)) {
@@ -25,16 +26,7 @@ function    debug($error) {
     echo '<pre>';
     var_dump($error);
     echo '</pre>';
-    exit;
 }
-
-//ob_start();
-//require '../app/Views/Test.prelang.php';
-//$str = ob_get_clean();
-//
-//preg_match_all('/(@(?!end)(\w*))\s*\(\s*((?:(?!\))[\s\S])*)\s*\)\s+((?:(?!@end)[\s\S])*)\s*(@end(\w*))/', $str, $matches, PREG_SET_ORDER);
-//echo $str."\n\n";
-//debug($matches);
 
 try {
     $router = Router::getInstance();

@@ -5,10 +5,21 @@ namespace   lib\Base\Validation;
 
 class   Validator
 {
-    protected   $rules = [];
-    protected   $errors = [];
+    /**
+     * @var array
+     */
+    private array   $rules = [];
+    /**
+     * @var array
+     */
+    private array   $errors = [];
 
-    public function __construct($pattern)
+    /**
+     * Validator constructor. create rules from array
+     *
+     * @param array $pattern
+     */
+    public function __construct(array $pattern)
     {
         foreach ($pattern as $property => $rules) {
             if (is_array($rules)) {
@@ -21,7 +32,14 @@ class   Validator
         }
     }
 
-    public function validate($data)
+    /**
+     * validate data
+     *
+     * @param array $data
+     *
+     * @return bool
+     */
+    public function validate(array $data): bool
     {
         $success = true;
 
@@ -37,29 +55,25 @@ class   Validator
         return $success;
     }
 
-    public function getErrorMessages()
+    /**
+     * get all errors
+     *
+     * @return array
+     */
+    public function getErrorMessages(): array
     {
         return $this->errors;
     }
 
-    public function getErrorMessagesFor($name)
+    /**
+     * get errors for property
+     *
+     * @param string $name
+     *
+     * @return mixed|null
+     */
+    public function getErrorMessagesFor(string $name)
     {
         return $this->errors[$name] ?? null;
     }
 }
-
-/*
- * [
- *     'property' => 'rule:params|rule:params|rule:params',
- *     'property' => ['rule:params', 'rule:params', 'rule:params'],
- *     'property' => [
- *         'rule' => [param1, param2, param3],
- *         'rule' => [param1, param2, param3],
- *         'rule' => [param1, param2, param3]
- *     ]
- *     'property' => [
- *         'rule:params',
- *         'rule' => [param1, param2, param3]
- *     ]
- * ]
- */

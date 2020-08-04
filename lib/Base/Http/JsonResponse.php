@@ -7,6 +7,9 @@ use         lib\Base\Http\Response;
 
 class   JsonResponse extends Response
 {
+    /**
+     * Make response
+     */
     public function run()
     {
         $data = json_encode($this->args);

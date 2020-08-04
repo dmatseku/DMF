@@ -20,7 +20,7 @@ use lib\Base\Support\Config;
             text-align: center;
         }
         #error {
-            font-size: 5rem;
+            font-size: 3rem;
             color: #3D5A80;
             text-align: center;
             margin-block-start: 0;

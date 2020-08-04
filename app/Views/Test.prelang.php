@@ -1,12 +1,31 @@
-@use('Layouts/layout.prelang')
+@use('@view/Layouts/Layout.prelang')
 
 @in('content')
-    {{ @(var) }}
-    @php
-    if (isset(@(inputErrors)) && isset(@(inputErrors['var']))):
-    @endphp
-        {{ @(inputErrors['var']) }}
-    @php
-    endif;
-    @endphp
+    <h1>{{ @(var) }}</h1>
+
+    @error('var')
+        <h2>{{ @(error) }}</h2>
+    @enderror
+
+    @for (@(i) = 5; @(i) >= 0; @(i)--)
+        <h3>{{ @(i) }}</h3>
+    @endfor
+
+    @if (true)
+        <p>if</p>
+    @endif
+
+    @if (false)
+        <p>if</p>
+    @elseif (true)
+        <p>elseif</p>
+        @endif
+
+    @if (false)
+        <p>if</p>
+    @elseif (false)
+        <p>elseif</p>
+    @else
+        <p>else</p>
+    @endif
 @endin

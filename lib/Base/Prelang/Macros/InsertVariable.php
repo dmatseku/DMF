@@ -1,28 +1,33 @@
 <?php
 
 
-namespace lib\Base\Prelang\Macros;
+namespace Prelang\Macros;
 
 
-use lib\Base\Prelang\Macros;
+use Prelang\Fragment;
+use Prelang\Macros;
 
 class InsertVariable extends Macros
 {
 
-    public function name()
+    public function name(): string
     {
         return '';
     }
 
-    public function before(&$page, &$fragment)
-    {
-        $var = $this->$fragment[3][0] ?? '';
-        $var = trim($var, " \t\n\r\0\x0B'");
+    public function before(Fragment $fragment) {return null;}
 
-        $page = substr_replace($page, '$this->'.$var, $fragment[0][1], strlen($fragment[0][0]));
+    public function after(Fragment $fragment) {return null;}
+
+    public function finish(Fragment $fragment)
+    {
+        $var = '';
+        if (!empty($fragment->match[3][0])) {
+            $var = '$this->'.trim($fragment->match[3][0], " \t\n\r\0\x0B'");
+        }
+
+        return $var;
     }
 
-    public function after(&$previous, &$page, &$resultMatches, &$fragment) {}
-
-    public function finish(&$page, &$fragment) {}
+    public function clean(Fragment $fragment): void {}
 }

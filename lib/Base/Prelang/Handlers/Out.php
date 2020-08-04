@@ -1,24 +1,30 @@
 <?php
 
 
-namespace lib\Base\Prelang\Handlers;
+namespace Prelang\Handlers;
 
 
-class Out extends \lib\Base\Prelang\Handler
+use Prelang\Handler;
+
+class Out extends Handler
 {
-
-    public function pattern()
+    public function __construct(&$args, &$macrosArray, $appSpace)
     {
-        //start: 1, name: 2, value: 3, end: 4, endname: 5
-        return '/({({|\!))\s*([\S\s]+)\s*((}|\!)})/';
+        parent::__construct($args, $macrosArray, $appSpace);
+
+        $this->with(self::CONTENT);
     }
 
-    protected function getMacrosName(&$matches)
+    protected function macrosBegin($macrosName)
     {
-        $name = $matches[2][0];
-        if ($name = '{') {
-            return $matches[5][0] === '}' ? $matches[2][0] : false;
+        return '{'.$macrosName;
+    }
+
+    protected function macrosEnd($macrosName)
+    {
+        if ($macrosName === '{') {
+            $macrosName = '}';
         }
-        return $matches[5][0] === $name ? $matches[2][0] : false;
+        return $macrosName.'}';
     }
 }

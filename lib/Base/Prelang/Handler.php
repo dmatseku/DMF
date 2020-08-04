@@ -1,92 +1,116 @@
 <?php
 
 
-namespace   lib\Base\Prelang;
-
-use lib\Base\Prelang\Handlers;
+namespace   Prelang;
 
 abstract class  Handler
 {
     use ViewArgs;
 
-    protected   $macros = [];
+    public const    PARAMS = 1;
+    public const    CONTENT = 2;
 
-    abstract public function    pattern();
-    abstract protected function getMacrosName(&$matches);
+    private array   $macros = [];
+    private int     $modules = 0;
 
-    public function             __construct(&$args, &$macrosArray, $appSpace, $selfSpace)
+    abstract protected function macrosBegin($macrosName);
+    abstract protected function macrosEnd($macrosName);
+
+    public function             __construct(&$args, &$macrosArray, $appSpace)
     {
         if (is_array($args)) {
             $this->args = &$args;
         }
 
         if (is_array($macrosArray)) {
-            $this->macros = Macros::createArray($args, $macrosArray, $appSpace, $selfSpace);
+            $this->macros = Macros::createArray($args, $macrosArray, $appSpace);
         }
     }
 
-    public static function      createArray(&$args, &$handlers, $appSpace, $selfSpace)
+    public static function      createArray(&$args, &$handlers, $appSpace)
     {
         $result = [];
 
         foreach ($handlers as $handler => $macros) {
             $handlerClass = $appSpace.'\\Handlers\\'.$handler;
             if (!class_exists($handlerClass)) {
-                $handlerClass = $selfSpace.'\\Handlers\\'.$handler;
+                $handlerClass = 'Prelang\\Handlers\\'.$handler;
                 if (!class_exists($handlerClass)) {
-                    throw new \RuntimeException('Handler of prelang does not exists', 500);
+                    throw new \RuntimeException('Handler "'.$handler.'" of prelang does not exists', 500);
                 }
             }
 
-            $result[$handler] = new $handlerClass($args, $macros, $appSpace, $selfSpace);
+            $result[$handler] = new $handlerClass($args, $macros, $appSpace);
         }
 
         return $result;
     }
 
-    public function             before(&$page, &$matches, $macrosArray)
+    protected function          has($module)
     {
+        return ($this->modules & $module) > 0;
+    }
+
+    protected function          with($module)
+    {
+        $this->modules |= $module;
+    }
+
+    private static function     replace(&$string, $replacement, array $fullMatch)
+    {
+        $position = $fullMatch[1];
+        $substr = $fullMatch[0];
+        $substrlen = strlen($fullMatch[0]);
+
+        if (is_string($replacement) && substr($string, $position, $substrlen) === $substr) {
+            $string = substr_replace($string, $replacement, $position, $substrlen);
+            $offset = 0;
+        } else {
+            $offset = $position + $substrlen;
+        }
+        return $offset;
+    }
+
+    public function             process(&$result, &$page, $macrosArray, $partName)
+    {
+        $match = new MacrosMatch([$this->has(self::PARAMS), $this->has(self::CONTENT)]);
+        $fragment = new Fragment();
+        $fragment->result = &$result;
+        $fragment->page = &$page;
+
         foreach ($macrosArray as $macros) {
             $macros = $this->macros[$macros];
+            $offset = 0;
 
-            foreach ($matches as $fragment) {
-                if ($macros->name() === $this->getMacrosName($fragment)) {
-                    $macros->before($page, $fragment);
-                }
+            while ($fragment->match = $match->match($fragment->page, $this->macrosBegin($macros->name()),
+                                                    $this->macrosEnd($macros->name()), $offset)) {
+                $partResult = $macros->$partName($fragment);
+                $offset = self::replace($fragment->page, $partResult, $fragment->match[0]);
+            }
+            while ($fragment->match = $match->match($fragment->result, $this->macrosBegin($macros->name()),
+                                                    $this->macrosEnd($macros->name()), $offset)) {
+                $partResult = $macros->$partName($fragment);
+                $offset = self::replace($fragment->result, $partResult, $fragment->match[0]);
             }
         }
     }
 
-    public function             after(&$previous, &$page, &$resultMatches, &$pageMatches, $macrosArray)
+    public function             clean(&$result)
     {
-        foreach ($macrosArray as $macros) {
-            $macros = $this->macros[$macros];
+        $match = new MacrosMatch([$this->has(self::PARAMS), $this->has(self::CONTENT)]);
+        $fragment = new Fragment();
+        $fragment->result = &$result;
 
-            foreach ($pageMatches as $fragment) {
-                if ($macros->name() === $this->getMacrosName($fragment)) {
-                    $macros->after($previous, $page, $resultMatches, $fragment);
+        foreach ($this->macros as $macros) {
+            $name = $macros->name();
+
+            while ($fragment->match = $match->match($result, $this->macrosBegin($name), $this->macrosEnd($name))) {
+                $result = preg_replace("/".preg_quote($fragment->match[0][0], null)."/", '', $result);
+                if ($result === null) {
+                    throw new \RuntimeException('Regex error', 500);
                 }
             }
+            $macros->clean($fragment);
         }
-    }
-
-    public function             finish(&$page, &$matches, $macrosArray)
-    {
-        foreach ($macrosArray as $macros) {
-            $macros = $this->macros[$macros];
-
-            foreach ($matches as $fragment) {
-                if ($macros->name() === $this->getMacrosName($fragment)) {
-                    $macros->finish($page, $fragment);
-                }
-            }
-        }
-    }
-
-    public function             clean(&$page)
-    {
-        $pattern = $this->pattern();
-
-        $page = preg_replace($pattern, '', $page);
     }
 }

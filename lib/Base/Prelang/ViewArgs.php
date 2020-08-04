@@ -1,7 +1,7 @@
 <?php
 
 
-namespace   lib\Base\Prelang;
+namespace   Prelang;
 
 
 trait   ViewArgs
