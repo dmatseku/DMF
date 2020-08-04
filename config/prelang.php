@@ -4,7 +4,6 @@ use lib\Base\Support\Session;
 
 return [
     'appSpace' => 'app\\Prelang',
-    'selfSpace' => 'lib\\Base\\Prelang',
     'viewDir' => [
        'view' => Session::get('DIR', '').'app/Views',
        'libView' => Session::get('DIR', '').'lib/Base/Views',
