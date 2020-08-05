@@ -28,7 +28,7 @@ class   View extends Response
      */
     public function     __construct(string $path)
     {
-        $this->processing = !empty(preg_match('/^.*\.prelang\s*$/', $path));
+        $this->processing = !empty(preg_match('/\.prelang\.php\s*$/', $path));
 
         if (!is_string($path)) {
             throw new \RuntimeException('Invalid path to view', 500);
@@ -56,7 +56,7 @@ class   View extends Response
     {
         extract($this->args, EXTR_OVERWRITE);
         $path = preg_replace('/@view/', Session::get('DIR', '').'app/Views', $this->path);
-        $path = preg_replace('/@libView/', Session::get('DIR', '').'lib/Base/Views', $path).'.php';
+        $path = preg_replace('/@libView/', Session::get('DIR', '').'lib/Base/Views', $path);
 
         if (!file_exists($path) || !is_file($path)) {
             throw new \RuntimeException('View "'.$path.'" not found', 500);

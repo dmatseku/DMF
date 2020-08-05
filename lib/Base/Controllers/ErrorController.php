@@ -20,10 +20,10 @@ class   ErrorController
     public function err404(Request $request)
     {
         if (Config::get('app', 'devmode', false)) {
-            return (new View('@libView/Errors/Error404'))
+            return (new View('@libView/Errors/Error404.php'))
                 ->with($request->all());
         }
-        return (new View('@libView/Errors/Error404'))
+        return (new View('@libView/Errors/Error404.php'))
             ->with([
                 'error' => 'Page not found',
                 'code' => 404
@@ -40,10 +40,10 @@ class   ErrorController
     public function err403(Request $request)
     {
         if (Config::get('app', 'devmode', false)) {
-            return (new View('@libView/Errors/Error403'))
+            return (new View('@libView/Errors/Error403.php'))
                 ->with($request->all());
         }
-        return (new View('@libView/Errors/Error403'))
+        return (new View('@libView/Errors/Error403.php'))
             ->with([
                 'error' => 'Forbidden',
                 'code' => 403
@@ -60,10 +60,11 @@ class   ErrorController
     public function err500(Request $request)
     {
         if (Config::get('app', 'devmode', false)) {
-            return (new View('@libView/Errors/Error500'))
+            return (new View('@libView/Errors/Error500.php'))
                 ->with($request->all());
         }
-        return (new View('@libView/Errors/Error500'))
+        echo "hello<br>";
+        return (new View('@libView/Errors/Error500.php'))
             ->with([
                 'error' => 'Internal server error',
                 'code' => 500

@@ -6,7 +6,6 @@ use lib\Base\Support\Config;
 use lib\Base\Support\Session;
 
 spl_autoload_register(function($class) {
-    $class = preg_replace('/^Prelang/', 'lib\\Base\\Prelang', $class);
     $class = '../'.str_replace('\\', '/', $class).'.php';
 
     if (file_exists($class)) {

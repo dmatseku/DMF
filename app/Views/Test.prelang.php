@@ -1,4 +1,4 @@
-@use('@view/Layouts/Layout.prelang')
+@use('@view/Layouts/Layout.prelang.php')
 
 @in('content')
     <h1>{{ @(var) }}</h1>
@@ -10,6 +10,8 @@
     @for (@(i) = 5; @(i) >= 0; @(i)--)
         <h3>{{ @(i) }}</h3>
     @endfor
+
+    @include('@view/include.php')
 
     @if (true)
         <p>if</p>

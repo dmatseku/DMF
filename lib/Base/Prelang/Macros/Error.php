@@ -1,9 +1,10 @@
 <?php
 
 
-namespace Prelang\Macros;
+namespace lib\Base\Prelang\Macros;
 
 
+use Prelang\Macros\ReplaceOperator;
 use Prelang\Fragment;
 
 class Error extends ReplaceOperator

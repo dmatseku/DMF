@@ -13,6 +13,6 @@ class TestController
 {
     public function index(Request $request)
     {
-        return (new View('@view/Test.prelang'))->with(['var' => 'hello']);
+        return (new View('@view/Test.prelang.php'))->with(['var' => 'hello']);
     }
 }
