@@ -17,8 +17,8 @@ class Error extends ReplaceOperator
     protected static function open(Fragment $fragment): string
     {
         $param = trim($fragment->match[3][0], " \t\n\r\0\x0B'\"");
-        return '<?php if (isset($this->inputErrors) && isset($this->inputErrors[\''.$param.'\'])):'.
-                    '$this->error = $this->inputErrors[\''.$param.'\']; ?>';
+        return '<?php if (isset($inputErrors) && isset($inputErrors[\''.$param.'\'])):'.
+                    '$error = $inputErrors[\''.$param.'\']; ?>';
     }
 
     protected static function close(Fragment $fragment): string
