@@ -1,5 +1,6 @@
 <?php
 
+use lib\Base\Http\Response;
 use lib\Base\Routing\ErrorRedirect;
 use lib\Base\Routing\Router;
 use lib\Base\Support\Config;
@@ -29,7 +30,12 @@ function    debug($error) {
 
 try {
     $router = Router::getInstance();
-    $router->getResponse()->run();
+    $response = $router->getResponse();
+    if (!is_subclass_of($response, Response::class)) {
+        throw new \RuntimeException('Invalid controller\'s response');
+    }
+    $response->run();
+
     Session::flash('previousRoute', trim(preg_replace('/\/index\.php|\?.*/', '', $_SERVER['REQUEST_URI']), '/'));
 } catch (\Exception $e) {
     $code = $e->getCode();
