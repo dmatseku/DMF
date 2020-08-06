@@ -2,6 +2,8 @@
 
 <?php
 
+use lib\Base\Support\Config;
+
 spl_autoload_register(function($class) {
     $class = '../'.str_replace('\\', '/', $class).'.php';
 
@@ -13,22 +15,20 @@ spl_autoload_register(function($class) {
 
 $destroy = false;
 if (($destroy = in_array('destroy', $argv, true)) || in_array('migrate', $argv, true)) {
-    $dbInfo = require 'database.php';
+    $dbInfo = Config::get('database', 'MIGRATION', []);
 
-    if (isset($dbInfo['MIGRATION'])) {
-        if ($destroy) {
-            foreach ($dbInfo['MIGRATION'] as $migrate) {
-                if (class_exists($migrate = 'migration\\'.$migrate) &&
-                    ($mg = new $migrate) instanceof lib\Base\Database\Migration) {
-                    $mg->destroy();
-                }
+    if ($destroy) {
+        foreach ($dbInfo as $migrate) {
+            if (class_exists($migrate = 'migration\\'.$migrate) &&
+                ($mg = new $migrate) instanceof lib\Base\Database\Migration) {
+                $mg->destroy();
             }
-        } else {
-            foreach ($dbInfo['MIGRATION'] as $migrate) {
-                if (class_exists($migrate = 'migration\\'.$migrate) &&
-                    ($mg = new $migrate) instanceof lib\Base\Database\Migration) {
-                    $mg->init();
-                }
+        }
+    } else {
+        foreach ($dbInfo as $migrate) {
+            if (class_exists($migrate = 'migration\\'.$migrate) &&
+                ($mg = new $migrate) instanceof lib\Base\Database\Migration) {
+                $mg->init();
             }
         }
     }
@@ -74,7 +74,7 @@ if (in_array('restore', $argv, true)) {
     }
 }
 
-function clean($dir) {
+function clean() {
     $path = '../app';
     if (file_exists($path)) {
 
