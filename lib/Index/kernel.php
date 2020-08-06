@@ -31,7 +31,7 @@ function    debug($error) {
 try {
     $router = Router::getInstance();
     $response = $router->getResponse();
-    if (!is_subclass_of($response, Response::class)) {
+    if (!($response instanceof Response)) {
         throw new \RuntimeException('Invalid controller\'s response');
     }
     $response->run();

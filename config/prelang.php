@@ -16,7 +16,6 @@ return [
             'OperatorElse',
         ],
         'BaseCut' => [
-            'InsertVariable',
             'Inc',
             'OperatorElseif',
         ],
@@ -51,9 +50,8 @@ return [
             'OperatorFor',
             'OperatorWhile',
         ],
-        ['BaseCut' => ['OperatorElseif']],
+        'BaseCut' => ['OperatorElseif'],
         'Base' => ['OperatorElse'],
-        'BaseCut' => ['InsertVariable'],
         'Out' => ['Special', 'Simple'],
     ],
 ];

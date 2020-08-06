@@ -1,7 +1,10 @@
 <?php
 
+namespace app\Models;
 
-class Test extends \lib\Base\Database\Row
+use lib\Base\Database\Row;
+
+class Test extends Row
 {
 
 }

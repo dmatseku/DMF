@@ -4,15 +4,16 @@
 namespace app\Controllers;
 
 
+use lib\Base\Database\DB;
 use lib\Base\Http\Request;
-use lib\Base\Routing\RouteRedirect;
-use lib\Base\Validation\Validator;
 use lib\Base\Views\View;
+use app\Models\Test;
 
 class TestController
 {
     public function index(Request $request)
     {
-        return (new View('@view/Test.prelang.php'))->with(['var' => 'hello']);
+        $model = DB::query('select * from test')->execute(null, Test::class);
+        return (new View('@view/Test.prelang.php'))->with(['model' => $model]);
     }
 }

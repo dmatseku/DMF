@@ -3,6 +3,7 @@
 <?php
 
 use lib\Base\Support\Config;
+use lib\Base\Support\Session;
 
 spl_autoload_register(function($class) {
     $class = '../'.str_replace('\\', '/', $class).'.php';
@@ -11,7 +12,9 @@ spl_autoload_register(function($class) {
         require_once $class;
     }
 });
-
+Session::put('DIR', realpath('').'/../');
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
 $destroy = false;
 if (($destroy = in_array('destroy', $argv, true)) || in_array('migrate', $argv, true)) {
@@ -25,6 +28,7 @@ if (($destroy = in_array('destroy', $argv, true)) || in_array('migrate', $argv, 
             }
         }
     } else {
+        var_dump($dbInfo);
         foreach ($dbInfo as $migrate) {
             if (class_exists($migrate = 'migration\\'.$migrate) &&
                 ($mg = new $migrate) instanceof lib\Base\Database\Migration) {

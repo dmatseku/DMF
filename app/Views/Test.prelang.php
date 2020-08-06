@@ -1,14 +1,9 @@
 @use('@view/Layouts/Layout.prelang.php')
 
 @in('content')
-    <h1>{{ @(var) }}</h1>
 
-    @error('var')
-        <h2>{{ @(error) }}</h2>
-    @enderror
-
-    @for (@(i) = 5; @(i) >= 0; @(i)--)
-        <h3>{{ @(i) }}</h3>
+    @for ($i = 5; $i >= 0; $i--)
+        <h3>{{ $i }}</h3>
     @endfor
 
     @include('@view/include.php')

@@ -7,7 +7,7 @@ namespace migration;
 use lib\Base\Database\DB;
 use lib\Base\Database\Migration;
 
-class test implements Migration
+class Test implements Migration
 {
 
     /**

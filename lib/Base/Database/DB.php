@@ -39,6 +39,9 @@ class   DB
 
         $this->connect = new PDO("$driver:host=$host;port=$port;dbname=$dbName;$other", $user, $pass);
         $this->query = $this->connect->prepare($query, $stmtOptions);
+        if (!$this->query) {
+            throw new \RuntimeException('Invalid query: '.$query, 500);
+        }
     }
 
     /**
@@ -49,7 +52,7 @@ class   DB
      *
      * @return static object of query
      */
-    public static function  createQuery(string $query, array $stmtOptions = [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY])
+    public static function  query(string $query, array $stmtOptions = [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY])
     {
         return new static($query, $stmtOptions);
     }
@@ -62,7 +65,7 @@ class   DB
      *
      * @return static object of query
      */
-    public static function  createProcedure(string $procedure, array $stmtOptions = [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY])
+    public static function  procedure(string $procedure, array $stmtOptions = [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY])
     {
         return new static("CALL $procedure", $stmtOptions);
     }
@@ -73,9 +76,11 @@ class   DB
      *
      * @return array array of results. if modelName is not null, then it's array of object. Otherwise it's simple array
      */
-    public function         getResult(array $params = null, string $modelName = null)
+    public function         execute(array $params = null, string $modelName = null)
     {
-        $this->query->execute($params);
+        if (!$this->query->execute($params)) {
+            throw new \RuntimeException('Query execute error', 500);
+        }
 
         if ($modelName === null) {
             return $this->query->fetchAll();

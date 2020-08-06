@@ -70,7 +70,9 @@ class   View extends Response
      */
     protected function  loadPrelangPage(): void
     {
-        $prelang = new Prelang($this->args, Config::get('prelang', null, []));
-        echo $prelang->process($this->path);
+        extract($this->args, EXTR_OVERWRITE);
+
+        $prelang = new Prelang(Config::get('prelang', null, []));
+        eval("?>".$prelang->process($this->path)."<?php");
     }
 }
