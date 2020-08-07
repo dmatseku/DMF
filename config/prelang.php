@@ -3,7 +3,7 @@
 use lib\Base\Support\Session;
 
 return [
-    'Spaces' => [
+    'spaces' => [
         'app\\Prelang',
         'lib\\Base\\Prelang'
     ],
@@ -23,6 +23,7 @@ return [
             'Code',
         ],
         'BaseFullParam' => [
+            'Define',
             'Error',
             'In',
             'OperatorIf',
@@ -37,6 +38,7 @@ return [
     ],
     'before' => [
         'BaseCut' => ['Inc'],
+        'BaseFullParam' => ['Define'],
     ],
     'after' => [
         'BaseFullParam' => ['In'],

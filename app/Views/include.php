@@ -3,3 +3,5 @@
         <p>{{ $key }}, {{ $value }}</p>
     @endforeach
 @endforeach
+
+@define ('number') 10 @enddefine

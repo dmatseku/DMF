@@ -3,6 +3,9 @@
 use lib\Base\Support\Config;
 
 @endphp
+
+@define ('plus', 'x', 'y') :x + :y @enddefine
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
