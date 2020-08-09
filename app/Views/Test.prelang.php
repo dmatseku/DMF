@@ -3,6 +3,13 @@
 
 @in('content')
 
+    <form method="POST" action="h">
+        @csrf
+        <input type="submit">
+    </form>
+    <p>
+        {{ $var }}
+    </p>
     @for ($i = 5; $i >= 0; $i--)
         <h3>{{ $i }}</h3>
     @endfor

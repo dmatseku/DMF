@@ -14,6 +14,11 @@ class TestController
     public function index(Request $request)
     {
         $model = DB::query('select * from test')->execute(null, Test::class);
-        return (new View('@view/Test.prelang.php'))->with(['model' => $model]);
+        return (new View('@view/Test.prelang.php'))->with(['model' => $model, 'var' => 'index']);
+    }
+    public function index1(Request $request)
+    {
+        $model = DB::query('select * from test')->execute(null, Test::class);
+        return (new View('@view/Test.prelang.php'))->with(['model' => $model, 'var' => 'csrf']);
     }
 }

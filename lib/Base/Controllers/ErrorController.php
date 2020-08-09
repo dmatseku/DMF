@@ -11,43 +11,16 @@ use lib\Base\Views\View;
 class   ErrorController
 {
     /**
-     * 404 error presentation
+     * 40x error presentation
      *
      * @param Request $request
      *
      * @return View
      */
-    public function err404(Request $request)
+    public function err40x(Request $request)
     {
-        if (Config::get('app', 'devmode', false)) {
-            return (new View('@libView/Errors/Error404.php'))
-                ->with($request->all());
-        }
-        return (new View('@libView/Errors/Error404.php'))
-            ->with([
-                'error' => 'Page not found',
-                'code' => 404
-            ]);
-    }
-
-    /**
-     * 403 error presentation
-     *
-     * @param Request $request
-     *
-     * @return View
-     */
-    public function err403(Request $request)
-    {
-        if (Config::get('app', 'devmode', false)) {
-            return (new View('@libView/Errors/Error403.php'))
-                ->with($request->all());
-        }
-        return (new View('@libView/Errors/Error403.php'))
-            ->with([
-                'error' => 'Forbidden',
-                'code' => 403
-            ]);
+        return (new View('@libView/Errors/Error40x.php'))
+            ->with($request->all());
     }
 
     /**

@@ -6,4 +6,6 @@ return [
     'devmode' => true,
 
     'home' => '',
+
+    'timezone' => 'Europe/Kiev'
 ];

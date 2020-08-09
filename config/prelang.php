@@ -14,6 +14,7 @@ return [
     'handlers' => [
         'Base' => [
             'OperatorElse',
+            'Csrf',
         ],
         'BaseCut' => [
             'Inc',
@@ -53,7 +54,7 @@ return [
             'OperatorWhile',
         ],
         'BaseCut' => ['OperatorElseif'],
-        'Base' => ['OperatorElse'],
+        'Base' => ['OperatorElse', 'Csrf'],
         'Out' => ['Special', 'Simple'],
     ],
 ];

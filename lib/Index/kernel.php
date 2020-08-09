@@ -22,6 +22,8 @@ if (Config::get('app', 'devmode', false)) {
     error_reporting(E_ALL);
 }
 
+date_default_timezone_set(Config::get('app', 'timezone', 'UTC'));
+
 function    debug($error) {
     echo '<pre>';
     var_dump($error);
@@ -40,8 +42,8 @@ try {
 } catch (\Exception $e) {
     $code = $e->getCode();
 
-    if ($code === 404 || $code === 403) {
-        (new ErrorRedirect('ErrorController@err'.$code))->with([
+    if ($code >= 400 || $code < 500) {
+        (new ErrorRedirect('ErrorController@err40x'))->with([
             'error' => $e->getMessage(),
             'code' => $code,
             'trace' => $e->getTrace()

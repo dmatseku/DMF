@@ -3,8 +3,9 @@
 
 namespace   lib\Base\Routing;
 use         lib\Base\Http\Request;
-use lib\Base\Support\Config;
-use lib\Base\Support\Session;
+use         lib\Base\Support\Config;
+use         lib\Base\Support\Session;
+use         lib\Base\Http\Csrf;
 
 class   Router
 {
@@ -139,6 +140,18 @@ class   Router
     }
 
     /**
+     * check csrf token
+     *
+     * @param Request $request
+     */
+    private function        csrf(Request $request): void
+    {
+        if (Csrf::isUnsafe($request->getRequestMethod())) {
+            Csrf::check($request->getInput('__csrf', ''));
+        }
+    }
+
+    /**
      * get response by route
      *
      * @return mixed
@@ -146,6 +159,8 @@ class   Router
     public function         getResponse()
     {
         if ($controller_info = $this->find()) {
+            $this->csrf($controller_info['request']);
+
             $controller = new $controller_info['params'][0]();
             $controller_func = $controller_info['params'][1];
 
