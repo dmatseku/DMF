@@ -37,4 +37,12 @@
     <p>{{ plus(5, 4) }}</p>
     <p>{{ number }}</p>
     <p>{{ number }}</p>
+    @switch ($var)
+@case ('index')
+    <p>{{ 'case' }}</p>
+@break
+@default
+    <p>{{ 'default' }}</p>
+@break
+    @endswitch
 @endin

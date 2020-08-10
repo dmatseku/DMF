@@ -7,11 +7,11 @@ namespace Prelang\Macros;
 use Prelang\Fragment;
 use Prelang\Macro\Macro;
 
-class Simple extends Macro
+class OperatorContinue extends Macro
 {
     public function name(): string
     {
-        return '!!';
+        return 'continue';
     }
 
     public function before(Fragment $fragment): ?string {return null;}
@@ -20,7 +20,7 @@ class Simple extends Macro
 
     public function finish(Fragment $fragment): ?string
     {
-        return '<?= '.$fragment->match[4][0].' ?>';
+        return "<?php continue; ?>";
     }
 
     public function clean(string &$result): void {}

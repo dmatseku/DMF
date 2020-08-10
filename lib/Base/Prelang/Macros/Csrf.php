@@ -5,7 +5,7 @@ namespace lib\Base\Prelang\Macros;
 
 
 use Prelang\Fragment;
-use Prelang\Macro;
+use Prelang\Macro\Macro;
 
 class Csrf extends Macro
 {
@@ -15,13 +15,13 @@ class Csrf extends Macro
         return 'csrf';
     }
 
-    public function before(Fragment $fragment) {}
+    public function before(Fragment $fragment): ?string {return null;}
 
-    public function after(Fragment $fragment) {}
+    public function after(Fragment $fragment): ?string {return null;}
 
-    public function finish(Fragment $fragment) {
+    public function finish(Fragment $fragment): ?string {
         return "<input type=hidden name=\"__csrf\" value=\"".\lib\Base\Http\Csrf::generate()."\">";
     }
 
-    public function clean(Fragment $fragment): void {}
+    public function clean(string &$result): void {}
 }
